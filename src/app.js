@@ -1,4 +1,12 @@
 import { CELLS, GRID, createGame, deleteDigit, inputDigit, selectCell } from './game.js';
+import {
+  loadStore,
+  saveStore,
+  normalizeName,
+  addLeaderboardEntry,
+  updateBestTime,
+} from './storage.js';
+import * as sfx from './sound.js';
 
 const els = {
   grid: document.getElementById('grid'),
@@ -8,14 +16,25 @@ const els = {
   score: document.getElementById('score'),
   mistakes: document.getElementById('mistakes'),
   progress: document.getElementById('progress'),
+  best: document.getElementById('best'),
   newGame: document.getElementById('new-game'),
   keypad: document.getElementById('keypad'),
+  name: document.getElementById('player-name'),
+  mute: document.getElementById('mute'),
+  lbBody: document.getElementById('lb-body'),
+  lbEmpty: document.getElementById('lb-empty'),
 };
+
+const storage = window.localStorage;
+const store = loadStore(storage);
 
 let game = createGame();
 let tick = null;
 let flashTimer = null;
+let lastScore = null;
 const cellEls = [];
+
+sfx.setMuted(store.muted);
 
 function buildGrid() {
   const corner = document.createElement('span');
@@ -56,8 +75,15 @@ function render() {
   els.mistakes.textContent = game.mistakes;
   els.progress.textContent = `${done}/${CELLS}`;
   els.newGame.textContent = game.startedAt === null ? 'Start' : 'New Game';
+  if (lastScore !== null && lastScore !== game.score) {
+    els.score.classList.remove('bump');
+    void els.score.offsetWidth;
+    els.score.classList.add('bump');
+  }
+  lastScore = game.score;
   renderEquation();
   renderTimer();
+  renderBest();
   for (let i = 0; i < CELLS; i++) renderCell(i);
 }
 
@@ -80,6 +106,29 @@ function renderEquation() {
 
 function renderTimer() {
   els.timer.textContent = formatTime(elapsedMs());
+}
+
+function renderBest() {
+  els.best.textContent = store.bestTimeMs === null ? '—' : formatTime(store.bestTimeMs);
+}
+
+function renderMute() {
+  els.mute.textContent = store.muted ? 'Sound off' : 'Sound on';
+  els.mute.setAttribute('aria-pressed', String(store.muted));
+}
+
+function renderLeaderboard() {
+  els.lbBody.textContent = '';
+  els.lbEmpty.hidden = store.leaderboard.length > 0;
+  store.leaderboard.forEach((e, i) => {
+    const tr = document.createElement('tr');
+    for (const v of [i + 1, e.name, formatTime(e.timeMs), e.score, e.mistakes]) {
+      const td = document.createElement('td');
+      td.textContent = v;
+      tr.append(td);
+    }
+    els.lbBody.append(tr);
+  });
 }
 
 function elapsedMs() {
@@ -108,6 +157,11 @@ function flash(kind) {
   }
 }
 
+function clearFlash() {
+  clearTimeout(flashTimer);
+  els.equation.classList.remove('good', 'bad');
+}
+
 function startTicking() {
   if (tick === null && game.startedAt !== null && game.finishedAt === null) {
     tick = setInterval(renderTimer, 500);
@@ -127,27 +181,73 @@ function focusActiveCell() {
   cellEls[game.active]?.focus();
 }
 
+function onComplete(ms) {
+  const entry = {
+    name: normalizeName(els.name.value),
+    timeMs: ms,
+    score: game.score,
+    mistakes: game.mistakes,
+    date: Date.now(),
+  };
+  store.leaderboard = addLeaderboardEntry(store.leaderboard, entry);
+  store.bestTimeMs = updateBestTime(store.bestTimeMs, entry);
+  saveStore(storage, store);
+  renderLeaderboard();
+  sfx.complete();
+  celebrate();
+}
+
+function celebrate() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const holder = document.createElement('div');
+  holder.className = 'confetti';
+  holder.setAttribute('aria-hidden', 'true');
+  const colors = ['#38bdf8', '#22c55e', '#f59e0b', '#e2e8f0'];
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('span');
+    p.style.left = `${Math.random() * 100}%`;
+    p.style.background = colors[i % colors.length];
+    p.style.animationDelay = `${Math.random() * 0.4}s`;
+    p.style.animationDuration = `${1.6 + Math.random()}s`;
+    holder.append(p);
+  }
+  document.body.append(holder);
+  setTimeout(() => holder.remove(), 3200);
+}
+
 function afterMove(result) {
+  if (result === 'correct' && game.finishedAt !== null) result = 'finished';
   if (result === 'correct') {
     setStatus('Correct', 'good');
     flash('good');
+    sfx.correct();
   } else if (result === 'incorrect') {
     setStatus('Try again', 'bad');
     flash('bad');
+    sfx.incorrect();
+  } else if (result === 'prefix') {
+    setStatus('');
   } else if (result === 'finished') {
     stopTicking();
-    setStatus(`All ${CELLS} complete in ${formatTime(elapsedMs())}. Score ${game.score}, mistakes ${game.mistakes}.`, 'good');
+    const ms = elapsedMs();
+    setStatus(`All ${CELLS} complete in ${formatTime(ms)}. Score ${game.score}, mistakes ${game.mistakes}.`, 'good');
+    onComplete(ms);
   }
   startTicking();
   render();
-  if (result === 'correct' || result === 'finished') scrollActiveIntoView();
+  if (result === 'correct' || result === 'finished') {
+    scrollActiveIntoView();
+    focusActiveCell();
+  }
 }
 
 function typeDigit(d) {
+  sfx.primeAudio();
   afterMove(inputDigit(game, d));
 }
 
 function backspace() {
+  sfx.primeAudio();
   if (deleteDigit(game) === 'deleted') {
     renderEquation();
     setStatus('');
@@ -170,27 +270,50 @@ els.grid.addEventListener('click', (e) => {
     setStatus('');
     render();
     btn.focus();
+    btn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 });
 
 els.newGame.addEventListener('click', () => {
+  sfx.primeAudio();
   stopTicking();
+  clearFlash();
   game = createGame();
   setStatus('');
   render();
   focusActiveCell();
+  scrollActiveIntoView();
+});
+
+els.mute.addEventListener('click', () => {
+  store.muted = !store.muted;
+  sfx.setMuted(store.muted);
+  saveStore(storage, store);
+  renderMute();
+});
+
+els.name.addEventListener('change', () => {
+  els.name.value = normalizeName(els.name.value);
+  store.playerName = els.name.value;
+  saveStore(storage, store);
 });
 
 document.addEventListener('keydown', (e) => {
+  if (e.target instanceof HTMLInputElement) return;
   if (/^[0-9]$/.test(e.key)) {
     e.preventDefault();
     typeDigit(e.key);
   } else if (e.key === 'Backspace') {
     e.preventDefault();
     backspace();
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault(); // spec: ignored — block native button activation
   }
-  // all other keys (letters, Enter, NumpadEnter, ...) are ignored
+  // all other keys are ignored
 });
 
+els.name.value = store.playerName;
+renderMute();
 buildGrid();
 render();
+renderLeaderboard();

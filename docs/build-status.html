@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Times Tables — build status (chunk 3 milestone)</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --line: #334155;
+        --ink: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --good: #22c55e;
+        --bad: #ef4444;
+        --warn: #f59e0b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 16px/1.5 system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        padding: 24px 16px 40px;
+      }
+      main { max-width: 60rem; margin: 0 auto; }
+      .eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 4px;
+      }
+      h1 { font-size: 1.6rem; margin: 0 0 4px; }
+      .sub { color: var(--muted); margin: 0 0 20px; font-size: 0.9rem; }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      section.wide { grid-column: 1 / -1; }
+      h2 {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 0 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex: none;
+      }
+      .dot.good { background: var(--good); }
+      .dot.accent { background: var(--accent); }
+      .dot.warn { background: var(--warn); }
+      ul { margin: 0; padding-left: 18px; }
+      li { margin: 3px 0; font-size: 0.9rem; }
+      li::marker { color: var(--muted); }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        font-variant-numeric: tabular-nums;
+      }
+      caption {
+        text-align: left;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        padding-bottom: 6px;
+      }
+      th, td {
+        text-align: left;
+        padding: 5px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      thead th { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+      td.good { color: var(--good); font-weight: 700; }
+      td.accent { color: var(--accent); font-weight: 700; }
+      .bar {
+        height: 8px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 8px 0 4px;
+      }
+      .bar span { display: block; height: 100%; background: var(--good); }
+      .barmeta { font-size: 0.78rem; color: var(--muted); }
+      footer {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Times Tables — factory run 20260922-171410-53e87e</p>
+      <h1>Build status: chunk 3 milestone</h1>
+      <p class="sub">2026-09-22 (UTC) · worktree times-tables-wt-20260922-171410-53e87e · vanilla JS, zero runtime dependencies</p>
+
+      <div class="grid">
+        <section>
+          <h2><span class="dot good"></span>Completed</h2>
+          <ul>
+            <li>Game engine: 144 cells, scoring (+10 / −5), prefix logic, cell locking, injectable clock</li>
+            <li>Mobile-first shell: HUD, grid, fixed thumb keypad, keyboard + numpad input</li>
+            <li>Review fixes: in-flow desktop keypad (no overlap), win detection on final keystroke, Enter/Space suppressed, stale flash cleared</li>
+            <li>Persistence: localStorage adapter — leaderboard (top 10), best time, player name, mute; no engine state stored</li>
+            <li>Web Audio sounds (correct / incorrect / completion) with persisted mute</li>
+            <li>Leaderboard panel + Best time stat; completion confetti honoring reduced motion</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot accent"></span>Current</h2>
+          <ul>
+            <li>Chunk 3 awaiting commit as a milestone on top of HEAD d1083f8</li>
+            <li>Feature-complete against the locked MVP scope; open for Grok 4.6 re-review</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot warn"></span>Remaining</h2>
+          <ul>
+            <li>Grok 4.6 re-review of chunk 3, then any review-driven polish</li>
+            <li>Optional, not required: roving tabindex on the 144-cell grid</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot good"></span>Tests</h2>
+          <ul>
+            <li><strong>37/37</strong> node:test pass (23 engine + 14 storage)</li>
+            <li><strong>17/17</strong> raw-CDP browser checks pass</li>
+            <li>Zero console errors / page exceptions at 1280×800 and 390×844</li>
+            <li>Completion, leaderboard insertion, new-game reset, mute persistence verified in-browser</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot accent"></span>Model usage</h2>
+          <table>
+            <caption>Estimated — no token telemetry exposed</caption>
+            <thead>
+              <tr><th scope="col">Model</th><th scope="col">Role</th><th scope="col">Calls</th><th scope="col">In / Out (est.)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Luna (Codex gpt-5.6-sol)</td><td>Orchestration</td><td>1</td><td>~4k / ~1.5k</td></tr>
+              <tr><td>Kimi (kimi-for-coding)</td><td>Coding</td><td>~45</td><td>~60k / ~25k</td></tr>
+              <tr><td>Grok 4.6</td><td>Review</td><td>1</td><td>~12k / ~3k</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2><span class="dot good"></span>Deployment status</h2>
+          <ul>
+            <li>Static site: <code>index.html</code> + <code>styles.css</code> + 3 ES modules in <code>src/</code></li>
+            <li>No build step, no backend, no auth/API; serve the directory with any static file server</li>
+            <li>Data stays on-device (localStorage); nothing leaves the browser</li>
+          </ul>
+        </section>
+
+        <section class="wide">
+          <h2><span class="dot good"></span>Milestone progress</h2>
+          <div class="bar" role="img" aria-label="Locked MVP scope: 100 percent complete"><span style="width: 100%"></span></div>
+          <p class="barmeta">Locked MVP scope (engine, shell, review fixes, persistence, audio, leaderboard, polish): 100%. Overall project incl. re-review: ~50% milestone.</p>
+        </section>
+      </div>
+
+      <footer>Self-contained report · no external assets · palette matches the app · generated 2026-09-22</footer>
+    </main>
+  </body>
+</html>

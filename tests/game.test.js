@@ -166,6 +166,19 @@ test('input after finish is ignored', () => {
   assert.equal(game.score, score);
 });
 
+test('completing keystroke returns "correct" with finishedAt already set (UI can detect the win)', () => {
+  let t = 0;
+  const game = createGame(() => t);
+  while (game.cells.filter((c) => c.complete).length < CELLS - 1) {
+    typeAnswer(game, game.cells[game.active].answer);
+  }
+  t = 4242;
+  const result = inputDigit(game, String(game.cells[game.active].answer));
+  assert.equal(result, 'correct');
+  assert.notEqual(game.finishedAt, null);
+  assert.equal(game.finishedAt, 4242);
+});
+
 test('new game resets board, score, mistakes, input and timer', () => {
   const game = createGame();
   inputDigit(game, '9');
