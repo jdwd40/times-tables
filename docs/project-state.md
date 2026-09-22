@@ -1,12 +1,13 @@
-# Project state — Times Tables (chunk 3)
+# Project state — Times Tables (final review fix)
 
-Updated 2026-09-22 (UTC). Worktree: `times-tables-wt-20260922-171410-53e87e`.
+Updated 2026-09-22 18:43 UTC. Worktree: `times-tables-wt-20260922-171410-53e87e`.
 
 ## Progress
 
 - Chunk 1: pure game engine (144 cells, scoring, timer, cell locking).
 - Chunk 2: mobile-first DOM shell (keypad, keyboard input, HUD, flash/shake).
-- Chunk 3 (this chunk): review fixes + locked MVP remainder — done.
+- Chunk 3: review fixes + locked MVP remainder — committed as `ba46952`.
+- Final review fix: duplicate-completion guard — committed on top (see below).
 
 ## Completed
 
@@ -23,22 +24,36 @@ Updated 2026-09-22 (UTC). Worktree: `times-tables-wt-20260922-171410-53e87e`.
   ("Player" when empty); Web Audio sounds with persisted mute; leaderboard
   panel + Best time stat; completion celebration honoring reduced motion.
   No engine state (`cells`, `now`) is ever stored; no backend.
+- Final Grok review MAJOR fixed: a digit entered after a finished run re-triggered
+  `onComplete()` (duplicate leaderboard entry + replayed sound/confetti), because
+  `afterMove` treated the engine's post-completion `'finished'` signal like the
+  completing keystroke. Fix: pure helper `isCompletionMove(result, game)` in
+  `src/game.js` — only a `'correct'` move with `finishedAt` newly set qualifies;
+  engine `'finished'` input is ignored in `src/app.js`. Completion handling now
+  runs exactly once per run; separate New Games still complete legitimately.
 
 ## Current
 
-HEAD `d1083f8` + uncommitted chunk-3 changes (about to commit as milestone).
-App is feature-complete per locked MVP scope.
+HEAD `ba46952` (chunk 3) + duplicate-completion fix on top.
+App is feature-complete per locked MVP scope; final review round closed.
 
 ## Next
 
-- Grok 4.6 re-review of chunk 3.
-- Optional polish only if review asks: roving tabindex on grid, layout niceties.
+- Orchestrator (Luna) verifies this milestone, then deploys. Deployment is
+  explicitly PENDING until that verification — do not treat the app as deployed.
+- Optional polish only if a future review asks: roving tabindex on grid,
+  layout niceties, Enter/Space preventDefault refinement (MINOR, noted by Grok).
 
 ## Tests
 
-- `npm test`: 37/37 pass (23 engine + 14 storage).
-- Raw-CDP browser probe `scratch/qa-chunk3-cdp.js`: 17/17 pass, zero console
-  errors, at 1280x800 and 390x844. Screenshots in the run evidence dir.
+- `npm test`: 38/38 pass (24 engine + 14 storage), incl. new
+  `isCompletionMove` regression test.
+- Final raw-CDP probe `scratch/qa-final-cdp.js` (chunk 3): 28/28 pass, zero
+  console errors, at 1280x800 and 390x844.
+- Focused regression probe `scratch/qa-dedupe-cdp.js` (this fix): 7/7 pass —
+  complete run → stray digit/Backspace/cell-click → leaderboard row count
+  unchanged (1); New Game → second complete run → 2 legitimate rows;
+  zero console errors. Probe verified to FAIL 5 checks on pre-fix code.
 
 ## Open issues
 
@@ -46,8 +61,11 @@ App is feature-complete per locked MVP scope.
   keypad in-flow, grid is the scroll region).
 - `game.now` remains a function on the live state object (fine at runtime);
   storage never serializes it.
+- Grok MINOR (not addressed, by instruction): broad Enter/Space preventDefault.
 
 ## Last review
 
-Grok first review: PASS WITH NOTES (2 major, 8 minor). Both majors and all
-applicable minors fixed in this chunk; see `review.md` in the run dir.
+Grok final review of chunk 3 (`ba46952`): 1 MAJOR (duplicate completion on
+post-finish input — fixed in this milestone) + 1 MINOR (Enter/Space
+preventDefault breadth — deferred). First review: PASS WITH NOTES
+(2 major, 8 minor), all previously fixed in chunk 3.

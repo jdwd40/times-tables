@@ -1,4 +1,4 @@
-import { CELLS, GRID, createGame, deleteDigit, inputDigit, selectCell } from './game.js';
+import { CELLS, GRID, createGame, deleteDigit, inputDigit, isCompletionMove, selectCell } from './game.js';
 import {
   loadStore,
   saveStore,
@@ -216,7 +216,8 @@ function celebrate() {
 }
 
 function afterMove(result) {
-  if (result === 'correct' && game.finishedAt !== null) result = 'finished';
+  if (result === 'finished') return; // input after completion: ignore, never re-complete
+  if (isCompletionMove(result, game)) result = 'finished';
   if (result === 'correct') {
     setStatus('Correct', 'good');
     flash('good');

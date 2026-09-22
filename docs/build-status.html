@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Times Tables — build status (chunk 3 milestone)</title>
+    <title>Times Tables — build status (final review fix milestone)</title>
     <style>
       :root {
         --bg: #0f172a;
@@ -113,8 +113,8 @@
   <body>
     <main>
       <p class="eyebrow">Times Tables — factory run 20260922-171410-53e87e</p>
-      <h1>Build status: chunk 3 milestone</h1>
-      <p class="sub">2026-09-22 (UTC) · worktree times-tables-wt-20260922-171410-53e87e · vanilla JS, zero runtime dependencies</p>
+      <h1>Build status: final review fix milestone</h1>
+      <p class="sub">2026-09-22 18:43 UTC · worktree times-tables-wt-20260922-171410-53e87e · vanilla JS, zero runtime dependencies</p>
 
       <div class="grid">
         <section>
@@ -126,32 +126,34 @@
             <li>Persistence: localStorage adapter — leaderboard (top 10), best time, player name, mute; no engine state stored</li>
             <li>Web Audio sounds (correct / incorrect / completion) with persisted mute</li>
             <li>Leaderboard panel + Best time stat; completion confetti honoring reduced motion</li>
+            <li>Final review MAJOR fixed: completion handling guarded to run exactly once per run — stray input after a finished run no longer duplicates leaderboard rows or replays sound/confetti (pure helper <code>isCompletionMove</code>)</li>
           </ul>
         </section>
 
         <section>
           <h2><span class="dot accent"></span>Current</h2>
           <ul>
-            <li>Chunk 3 awaiting commit as a milestone on top of HEAD d1083f8</li>
-            <li>Feature-complete against the locked MVP scope; open for Grok 4.6 re-review</li>
+            <li>Chunk 3 committed as <code>ba46952</code>; duplicate-completion fix committed on top</li>
+            <li>Feature-complete against the locked MVP scope; Grok final review round closed (MAJOR fixed, MINOR deferred)</li>
           </ul>
         </section>
 
         <section>
           <h2><span class="dot warn"></span>Remaining</h2>
           <ul>
-            <li>Grok 4.6 re-review of chunk 3, then any review-driven polish</li>
-            <li>Optional, not required: roving tabindex on the 144-cell grid</li>
+            <li>Orchestrator verification, then deployment — deployment explicitly PENDING until verified</li>
+            <li>Optional, not required: roving tabindex on the 144-cell grid; Enter/Space preventDefault refinement (Grok MINOR)</li>
           </ul>
         </section>
 
         <section>
           <h2><span class="dot good"></span>Tests</h2>
           <ul>
-            <li><strong>37/37</strong> node:test pass (23 engine + 14 storage)</li>
-            <li><strong>17/17</strong> raw-CDP browser checks pass</li>
-            <li>Zero console errors / page exceptions at 1280×800 and 390×844</li>
-            <li>Completion, leaderboard insertion, new-game reset, mute persistence verified in-browser</li>
+            <li><strong>38/38</strong> node:test pass (24 engine + 14 storage), incl. <code>isCompletionMove</code> regression test</li>
+            <li><strong>28/28</strong> final raw-CDP browser checks pass (chunk 3)</li>
+            <li><strong>7/7</strong> focused duplicate-completion probe pass; verified to fail 5 checks on pre-fix code</li>
+            <li>Zero console errors / page exceptions across all probes at 1280×800 and 390×844</li>
+            <li>Completion, leaderboard insertion exactly once per run, same-name repeat across New Games, mute persistence verified in-browser</li>
           </ul>
         </section>
 
@@ -163,9 +165,9 @@
               <tr><th scope="col">Model</th><th scope="col">Role</th><th scope="col">Calls</th><th scope="col">In / Out (est.)</th></tr>
             </thead>
             <tbody>
-              <tr><td>Luna (Codex gpt-5.6-sol)</td><td>Orchestration</td><td>1</td><td>~4k / ~1.5k</td></tr>
-              <tr><td>Kimi (kimi-for-coding)</td><td>Coding</td><td>~45</td><td>~60k / ~25k</td></tr>
-              <tr><td>Grok 4.6</td><td>Review</td><td>1</td><td>~12k / ~3k</td></tr>
+              <tr><td>Luna (Codex gpt-5.6-sol)</td><td>Orchestration</td><td>2</td><td>~8k / ~3k</td></tr>
+              <tr><td>Kimi (kimi-for-coding)</td><td>Coding</td><td>~55</td><td>~75k / ~30k</td></tr>
+              <tr><td>Grok 4.6</td><td>Review (2 rounds: first + final)</td><td>2</td><td>~30k / ~7k</td></tr>
             </tbody>
           </table>
         </section>
@@ -176,17 +178,18 @@
             <li>Static site: <code>index.html</code> + <code>styles.css</code> + 3 ES modules in <code>src/</code></li>
             <li>No build step, no backend, no auth/API; serve the directory with any static file server</li>
             <li>Data stays on-device (localStorage); nothing leaves the browser</li>
+            <li><strong>Deployment pending</strong> — awaiting orchestrator verification of this milestone</li>
           </ul>
         </section>
 
         <section class="wide">
           <h2><span class="dot good"></span>Milestone progress</h2>
           <div class="bar" role="img" aria-label="Locked MVP scope: 100 percent complete"><span style="width: 100%"></span></div>
-          <p class="barmeta">Locked MVP scope (engine, shell, review fixes, persistence, audio, leaderboard, polish): 100%. Overall project incl. re-review: ~50% milestone.</p>
+          <p class="barmeta">Locked MVP scope (engine, shell, review fixes, persistence, audio, leaderboard, polish, final-review fix): 100%. Deployment: pending orchestrator verification.</p>
         </section>
       </div>
 
-      <footer>Self-contained report · no external assets · palette matches the app · generated 2026-09-22</footer>
+      <footer>Self-contained report · no external assets · palette matches the app · generated 2026-09-22 · final review fix milestone</footer>
     </main>
   </body>
 </html>

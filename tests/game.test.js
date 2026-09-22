@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createGame, inputDigit, deleteDigit, selectCell, GRID, CELLS } from '../src/game.js';
+import { createGame, inputDigit, deleteDigit, selectCell, isCompletionMove, GRID, CELLS } from '../src/game.js';
 
 function typeAnswer(game, answer) {
   for (const d of String(answer)) inputDigit(game, d);
@@ -177,6 +177,32 @@ test('completing keystroke returns "correct" with finishedAt already set (UI can
   assert.equal(result, 'correct');
   assert.notEqual(game.finishedAt, null);
   assert.equal(game.finishedAt, 4242);
+});
+
+test('isCompletionMove: exactly one completion transition per run; stray input after finish is not one', () => {
+  let t = 0;
+  const game = createGame(() => t);
+  while (game.cells.filter((c) => c.complete).length < CELLS - 1) {
+    typeAnswer(game, game.cells[game.active].answer);
+  }
+  assert.equal(isCompletionMove('prefix', game), false); // ordinary non-final move
+  assert.equal(isCompletionMove('correct', game), false); // 'correct' before the final cell
+
+  const result = inputDigit(game, String(game.cells[game.active].answer)); // the completing keystroke
+  assert.equal(result, 'correct');
+  assert.equal(isCompletionMove(result, game), true); // this very move completed the run
+
+  // stray digit after completion: engine reports 'finished' — never a completion move,
+  // so UI completion handling (leaderboard, sound, confetti) must not re-run
+  assert.equal(inputDigit(game, '9'), 'finished');
+  assert.equal(isCompletionMove('finished', game), false);
+
+  // a separate New Game may legitimately complete again
+  const fresh = createGame(() => t);
+  while (fresh.cells.filter((c) => c.complete).length < CELLS - 1) {
+    typeAnswer(fresh, fresh.cells[fresh.active].answer);
+  }
+  assert.equal(isCompletionMove(inputDigit(fresh, String(fresh.cells[fresh.active].answer)), fresh), true);
 });
 
 test('new game resets board, score, mistakes, input and timer', () => {

@@ -47,6 +47,14 @@ export function deleteDigit(game) {
   return 'deleted';
 }
 
+// True only when THIS move just completed the run (result 'correct' with
+// finishedAt now set). The engine separately returns 'finished' for any input
+// arriving after completion; that signal must not retrigger completion
+// handling (duplicate leaderboard entry, replayed sound/confetti).
+export function isCompletionMove(result, game) {
+  return result === 'correct' && game.finishedAt !== null;
+}
+
 export function selectCell(game, index) {
   if (game.finishedAt !== null) return 'finished';
   if (!Number.isInteger(index) || index < 0 || index >= CELLS) return 'invalid';
