@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Times Tables — build status (deployed)</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --line: #334155;
+        --ink: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --good: #22c55e;
+        --bad: #ef4444;
+        --warn: #f59e0b;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 16px/1.5 system-ui, -apple-system, sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        padding: 24px 16px 40px;
+      }
+      main { max-width: 60rem; margin: 0 auto; }
+      .eyebrow {
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 4px;
+      }
+      h1 { font-size: 1.6rem; margin: 0 0 4px; }
+      .sub { color: var(--muted); margin: 0 0 20px; font-size: 0.9rem; }
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px 16px;
+      }
+      section.wide { grid-column: 1 / -1; }
+      h2 {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        margin: 0 0 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex: none;
+      }
+      .dot.good { background: var(--good); }
+      .dot.accent { background: var(--accent); }
+      .dot.warn { background: var(--warn); }
+      ul { margin: 0; padding-left: 18px; }
+      li { margin: 3px 0; font-size: 0.9rem; }
+      li::marker { color: var(--muted); }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        font-variant-numeric: tabular-nums;
+      }
+      caption {
+        text-align: left;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        padding-bottom: 6px;
+      }
+      th, td {
+        text-align: left;
+        padding: 5px 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      thead th { color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+      td.good { color: var(--good); font-weight: 700; }
+      td.accent { color: var(--accent); font-weight: 700; }
+      .bar {
+        height: 8px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 8px 0 4px;
+      }
+      .bar span { display: block; height: 100%; background: var(--good); }
+      .barmeta { font-size: 0.78rem; color: var(--muted); }
+      footer {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Times Tables — factory run 20260922-171410-53e87e</p>
+      <h1>Build status: final MVP</h1>
+      <p class="sub">2026-09-22 19:15 UTC · worktree times-tables-wt-20260922-171410-53e87e · vanilla JS, zero runtime dependencies</p>
+
+      <div class="grid">
+        <section>
+          <h2><span class="dot good"></span>Completed</h2>
+          <ul>
+            <li>Game engine: 144 cells, scoring (+10 / −5), prefix logic, cell locking, injectable clock</li>
+            <li>Mobile-first shell: HUD, grid, fixed thumb keypad, keyboard + numpad input</li>
+            <li>Review fixes: in-flow desktop keypad (no overlap), win detection on final keystroke, Enter/Space suppressed, stale flash cleared</li>
+            <li>Persistence: localStorage adapter — leaderboard (top 10), best time, player name, mute; no engine state stored</li>
+            <li>Web Audio sounds (correct / incorrect / completion) with persisted mute</li>
+            <li>Leaderboard panel + Best time stat; completion confetti honoring reduced motion</li>
+            <li>Final review MAJOR fixed: completion handling guarded to run exactly once per run — stray input after a finished run no longer duplicates leaderboard rows or replays sound/confetti (pure helper <code>isCompletionMove</code>)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot accent"></span>Current</h2>
+          <ul>
+            <li>Reviewed candidate <code>7ef8a53</code> deployed to <code>https://jdwd40.com/times-tables/</code></li>
+            <li>Live browser verification passed; PR #1 remains open (no automatic merge)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot warn"></span>Remaining</h2>
+          <ul>
+            <li>None blocking: live path, assets, browser behavior and persistence verified</li>
+            <li>Deployment and rollback details are recorded in <code>docs/deployment.md</code></li>
+            <li>Optional, not required: roving tabindex on the 144-cell grid; Enter/Space preventDefault refinement (Grok MINOR)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot good"></span>Tests</h2>
+          <ul>
+            <li><strong>38/38</strong> node:test pass (24 engine + 14 storage), incl. <code>isCompletionMove</code> regression test</li>
+            <li><strong>28/28</strong> final raw-CDP browser checks pass (chunk 3)</li>
+            <li><strong>7/7</strong> focused duplicate-completion probe pass; verified to fail 5 checks on pre-fix code</li>
+            <li>Zero console errors / page exceptions across all probes at 1280×800 and 390×844</li>
+            <li>Completion, leaderboard insertion exactly once per run, same-name repeat across New Games, mute persistence verified in-browser</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2><span class="dot accent"></span>Model usage</h2>
+          <table>
+            <caption>Estimated — no token telemetry exposed</caption>
+            <thead>
+              <tr><th scope="col">Model</th><th scope="col">Role</th><th scope="col">Calls</th><th scope="col">In / Out (est.)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Luna (Codex gpt-5.6-sol)</td><td>Orchestration</td><td>2</td><td>~8k / ~3k</td></tr>
+              <tr><td>Kimi (kimi-for-coding)</td><td>Coding</td><td>~55</td><td>~75k / ~30k</td></tr>
+              <tr><td>Grok 4.6</td><td>Review (2 rounds: first + final)</td><td>2</td><td>~30k / ~7k</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h2><span class="dot good"></span>Deployment status</h2>
+          <ul>
+            <li>Static site: <code>index.html</code> + <code>styles.css</code> + 3 ES modules in <code>src/</code></li>
+            <li>No build step, no backend, no auth/API; serve the directory with any static file server</li>
+            <li>Data stays on-device (localStorage); nothing leaves the browser</li>
+            <li><strong>Deployed</strong> — isolated nginx prefix at <code>/times-tables/</code>; portfolio root preserved</li>
+          </ul>
+        </section>
+
+        <section class="wide">
+          <h2><span class="dot good"></span>Milestone progress</h2>
+          <div class="bar" role="img" aria-label="Locked MVP scope: 100 percent complete"><span style="width: 100%"></span></div>
+          <p class="barmeta">Locked MVP scope: 100%. Live deployment: verified at <code>https://jdwd40.com/times-tables/</code>.</p>
+        </section>
+      </div>
+
+      <footer>Self-contained report · no external assets · palette matches the app · generated 2026-09-22 · deployed MVP</footer>
+    </main>
+  </body>
+</html>
