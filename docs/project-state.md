@@ -34,7 +34,7 @@ Updated 2026-09-22 18:43 UTC. Worktree: `times-tables-wt-20260922-171410-53e87e`
 
 ## Current
 
-HEAD `4319c3f` (duplicate-completion fix); branch is pushed and PR #1 is open.
+HEAD `4ab5097` (final app code `4319c3f` plus deployment documentation); branch is pushed and PR #1 is open.
 App is feature-complete per locked MVP scope; final review round closed.
 
 ## Next
