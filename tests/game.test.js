@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createGame, inputDigit, GRID, CELLS } from '../src/game.js';
+import { createGame, inputDigit, deleteDigit, selectCell, GRID, CELLS } from '../src/game.js';
 
 function typeAnswer(game, answer) {
   for (const d of String(answer)) inputDigit(game, d);
@@ -180,4 +180,79 @@ test('new game resets board, score, mistakes, input and timer', () => {
   assert.equal(fresh.input, '');
   assert.equal(fresh.startedAt, null);
   assert.equal(fresh.finishedAt, null);
+});
+
+test('deleteDigit removes the last pending digit', () => {
+  const game = createGame();
+  advanceTo(game, 12, 12); // answer "144"
+  inputDigit(game, '1');
+  inputDigit(game, '4');
+  assert.equal(game.input, '14');
+  assert.equal(deleteDigit(game), 'deleted');
+  assert.equal(game.input, '1');
+  assert.equal(deleteDigit(game), 'deleted');
+  assert.equal(game.input, '');
+});
+
+test('deleteDigit on empty input is a no-op', () => {
+  const game = createGame();
+  assert.equal(deleteDigit(game), 'empty');
+  assert.equal(game.input, '');
+});
+
+test('deleteDigit does not touch score or started state', () => {
+  const game = createGame();
+  advanceTo(game, 12, 12);
+  inputDigit(game, '1');
+  const score = game.score;
+  const started = game.startedAt;
+  deleteDigit(game);
+  assert.equal(game.score, score);
+  assert.equal(game.startedAt, started);
+  assert.equal(game.cells[game.active].complete, false);
+});
+
+test('deleteDigit after finish is ignored', () => {
+  let t = 0;
+  const game = createGame(() => t);
+  while (game.finishedAt === null) typeAnswer(game, game.cells[game.active].answer);
+  assert.equal(deleteDigit(game), 'finished');
+});
+
+test('selectCell jumps to an incomplete cell and clears pending input', () => {
+  const game = createGame();
+  advanceTo(game, 12, 11); // completes 0..141, active 142 (12x11, answer "132")
+  inputDigit(game, '1');
+  assert.equal(game.input, '1');
+  const started = game.startedAt;
+  assert.equal(selectCell(game, 143), 'selected');
+  assert.equal(game.active, 143);
+  assert.equal(game.input, '');
+  assert.deepEqual({ a: game.cells[143].a, b: game.cells[143].b }, { a: 12, b: 12 });
+  assert.equal(game.startedAt, started); // selecting never starts (or restarts) the timer
+});
+
+test('selectCell refuses completed cells', () => {
+  const game = createGame();
+  typeAnswer(game, 1); // complete 1x1
+  assert.equal(game.active, 1);
+  assert.equal(selectCell(game, 0), 'locked');
+  assert.equal(game.active, 1);
+  assert.equal(game.cells[0].complete, true);
+});
+
+test('selectCell refuses out-of-range or non-integer indexes', () => {
+  const game = createGame();
+  assert.equal(selectCell(game, -1), 'invalid');
+  assert.equal(selectCell(game, CELLS), 'invalid');
+  assert.equal(selectCell(game, 1.5), 'invalid');
+  assert.equal(selectCell(game, '3'), 'invalid');
+  assert.equal(game.active, 0);
+});
+
+test('selectCell after finish is ignored', () => {
+  let t = 0;
+  const game = createGame(() => t);
+  while (game.finishedAt === null) typeAnswer(game, game.cells[game.active].answer);
+  assert.equal(selectCell(game, 0), 'finished');
 });

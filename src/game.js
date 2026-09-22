@@ -40,6 +40,22 @@ export function inputDigit(game, digit) {
   return 'incorrect';
 }
 
+export function deleteDigit(game) {
+  if (game.finishedAt !== null) return 'finished';
+  if (game.input === '') return 'empty';
+  game.input = game.input.slice(0, -1);
+  return 'deleted';
+}
+
+export function selectCell(game, index) {
+  if (game.finishedAt !== null) return 'finished';
+  if (!Number.isInteger(index) || index < 0 || index >= CELLS) return 'invalid';
+  if (game.cells[index].complete) return 'locked';
+  game.active = index;
+  game.input = '';
+  return 'selected';
+}
+
 function advance(game) {
   for (let n = 1; n <= CELLS; n++) {
     const idx = (game.active + n) % CELLS;

@@ -4,9 +4,44 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Times Tables</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <!-- UI rendering lands in the next chunk; engine is src/game.js -->
-    <script type="module" src="./src/game.js"></script>
+    <header class="hud">
+      <div class="hud-top">
+        <h1>Times Tables</h1>
+        <button id="new-game" class="primary" type="button">Start</button>
+      </div>
+      <dl class="stats">
+        <div><dt>Time</dt><dd id="timer">0:00</dd></div>
+        <div><dt>Score</dt><dd id="score">0</dd></div>
+        <div><dt>Mistakes</dt><dd id="mistakes">0</dd></div>
+        <div><dt>Done</dt><dd id="progress">0/144</dd></div>
+      </dl>
+      <p id="equation" class="equation" aria-live="polite">1 × 1 = ?</p>
+      <p id="status" class="status" role="status"></p>
+    </header>
+
+    <main class="board">
+      <div id="grid-scroll" class="grid-scroll">
+        <div id="grid" class="grid" role="group" aria-label="Times tables grid"></div>
+      </div>
+    </main>
+
+    <nav id="keypad" class="keypad" aria-label="Number pad">
+      <button type="button" data-key="1">1</button>
+      <button type="button" data-key="2">2</button>
+      <button type="button" data-key="3">3</button>
+      <button type="button" data-key="4">4</button>
+      <button type="button" data-key="5">5</button>
+      <button type="button" data-key="6">6</button>
+      <button type="button" data-key="7">7</button>
+      <button type="button" data-key="8">8</button>
+      <button type="button" data-key="9">9</button>
+      <button type="button" data-key="back" aria-label="Backspace">⌫</button>
+      <button type="button" data-key="0" class="zero">0</button>
+    </nav>
+
+    <script type="module" src="./src/app.js"></script>
   </body>
 </html>
