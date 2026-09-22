@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Times Tables — build status (final review fix milestone)</title>
+    <title>Times Tables — build status (deployed)</title>
     <style>
       :root {
         --bg: #0f172a;
@@ -114,7 +114,7 @@
     <main>
       <p class="eyebrow">Times Tables — factory run 20260922-171410-53e87e</p>
       <h1>Build status: final MVP</h1>
-      <p class="sub">2026-09-22 18:43 UTC · worktree times-tables-wt-20260922-171410-53e87e · vanilla JS, zero runtime dependencies</p>
+      <p class="sub">2026-09-22 19:15 UTC · worktree times-tables-wt-20260922-171410-53e87e · vanilla JS, zero runtime dependencies</p>
 
       <div class="grid">
         <section>
@@ -133,16 +133,16 @@
         <section>
           <h2><span class="dot accent"></span>Current</h2>
           <ul>
-            <li>Final candidate committed as <code>4319c3f</code>; branch pushed and PR #1 open</li>
-            <li>Feature-complete against the locked MVP scope; Grok final review closed (MAJOR fixed, MINOR deferred)</li>
+            <li>Reviewed candidate <code>7ef8a53</code> deployed to <code>https://jdwd40.com/times-tables/</code></li>
+            <li>Live browser verification passed; PR #1 remains open (no automatic merge)</li>
           </ul>
         </section>
 
         <section>
           <h2><span class="dot warn"></span>Remaining</h2>
           <ul>
-            <li>Live deployment safely skipped: jdwd40.com resolves to a separate nginx host and remote SSH credentials are unavailable</li>
-            <li>Exact deployment steps are recorded in <code>docs/deployment.md</code></li>
+            <li>None blocking: live path, assets, browser behavior and persistence verified</li>
+            <li>Deployment and rollback details are recorded in <code>docs/deployment.md</code></li>
             <li>Optional, not required: roving tabindex on the 144-cell grid; Enter/Space preventDefault refinement (Grok MINOR)</li>
           </ul>
         </section>
@@ -179,18 +179,18 @@
             <li>Static site: <code>index.html</code> + <code>styles.css</code> + 3 ES modules in <code>src/</code></li>
             <li>No build step, no backend, no auth/API; serve the directory with any static file server</li>
             <li>Data stays on-device (localStorage); nothing leaves the browser</li>
-            <li><strong>Not deployed</strong> — safely skipped because the existing domain path collides with the portfolio fallback</li>
+            <li><strong>Deployed</strong> — isolated nginx prefix at <code>/times-tables/</code>; portfolio root preserved</li>
           </ul>
         </section>
 
         <section class="wide">
           <h2><span class="dot good"></span>Milestone progress</h2>
           <div class="bar" role="img" aria-label="Locked MVP scope: 100 percent complete"><span style="width: 100%"></span></div>
-          <p class="barmeta">Locked MVP scope (engine, shell, review fixes, persistence, audio, leaderboard, polish, final-review fix): 100%. Live deployment: safely skipped with exact steps documented.</p>
+          <p class="barmeta">Locked MVP scope: 100%. Live deployment: verified at <code>https://jdwd40.com/times-tables/</code>.</p>
         </section>
       </div>
 
-      <footer>Self-contained report · no external assets · palette matches the app · generated 2026-09-22 · final MVP</footer>
+      <footer>Self-contained report · no external assets · palette matches the app · generated 2026-09-22 · deployed MVP</footer>
     </main>
   </body>
 </html>

@@ -1,6 +1,6 @@
-# Project state — Times Tables (final review fix)
+# Project state — Times Tables (deployed)
 
-Updated 2026-09-22 18:43 UTC. Worktree: `times-tables-wt-20260922-171410-53e87e`.
+Updated 2026-09-22 19:15 UTC. Worktree: `times-tables-wt-20260922-171410-53e87e`.
 
 ## Progress
 
@@ -34,15 +34,18 @@ Updated 2026-09-22 18:43 UTC. Worktree: `times-tables-wt-20260922-171410-53e87e`
 
 ## Current
 
-HEAD `4ab5097` (final app code `4319c3f` plus deployment documentation); branch is pushed and PR #1 is open.
-App is feature-complete per locked MVP scope; final review round closed.
+HEAD `7ef8a53` (reviewed app + deployment documentation); deployed to
+`https://jdwd40.com/times-tables/` and verified in-browser. PR #1 remains open.
+App is feature-complete per locked MVP scope; final review round and live
+deployment verification are closed.
 
 ## Next
 
-- Live deployment was safely skipped: `jdwd40.com` resolves to a separate nginx
-  host (`213.165.91.221`), `/times-tables` currently serves the existing portfolio
-  fallback, SSH access timed out, and no safe remote deployment credentials are
-  available. Exact steps are in `docs/deployment.md`.
+- Live deployment complete: static files are isolated at
+  `/var/www/jdwd40.com/html/times-tables` with a dedicated nginx `/times-tables/`
+  location. Existing portfolio root was preserved.
+- Verified live redirect, HTML, CSS, ES module, 144 cells, keypad input,
+  keyboard progression, mute persistence after reload, and unchanged root site.
 - Optional polish only if a future review asks: roving tabindex on grid,
   layout niceties, Enter/Space preventDefault refinement (MINOR, noted by Grok).
 

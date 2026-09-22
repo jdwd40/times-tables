@@ -2,18 +2,23 @@
 
 ## Current disposition
 
-Live deployment was intentionally skipped for this run.
+Deployed and verified at:
 
-- `jdwd40.com` resolves to `213.165.91.221`, a separate nginx host.
-- `https://jdwd40.com/times-tables` currently serves the existing portfolio SPA fallback, so replacing it without host access could damage an unrelated site.
-- SSH to `jdwd40.com` timed out from the build host.
-- The local Hermes edge proxy is unrelated to the domain DNS and currently serves Robot Factory on its own port.
+`https://jdwd40.com/times-tables/`
 
-The app is complete and verified locally. The implementation branch is pushed and available in PR #1.
+The static app is isolated at `/var/www/jdwd40.com/html/times-tables` and nginx
+has dedicated exact/prefix locations in the existing `jdwd40.com` TLS vhost.
+The portfolio root and unrelated locations were preserved.
+
+Deployment commit: `7ef8a53`.
+
+Verified live: redirect to the trailing-slash path, HTML/CSS/module responses,
+144 cells, keypad input, physical keyboard progression, mute persistence after
+reload, and unchanged `https://jdwd40.com/` portfolio response.
 
 ## Exact safe deployment steps
 
-Run these steps on the existing nginx host after obtaining authorized access:
+The deployment that was performed used these steps on the existing nginx host:
 
 1. Fetch the repository and check out the reviewed commit:
 
@@ -21,16 +26,16 @@ Run these steps on the existing nginx host after obtaining authorized access:
    git clone https://github.com/jdwd40/times-tables.git
    cd times-tables
    git fetch origin factory/20260922-171410-53e87e-times-tables
-   git checkout 4319c3f3070f62bcc5cedc8c4984ca739c22daee
+   git checkout 7ef8a533ba7a1267811a7cfea4e3a7d13ca5e4d1
    ```
 
 2. Copy the static site to an isolated document root. Do not replace the existing portfolio root:
 
    ```sh
-   sudo install -d -m 0755 /var/www/jdwd40-times-tables
-   sudo cp index.html styles.css /var/www/jdwd40-times-tables/
-   sudo cp -r src /var/www/jdwd40-times-tables/
-   sudo chown -R root:root /var/www/jdwd40-times-tables
+   sudo install -d -m 0755 /var/www/jdwd40.com/html/times-tables
+   sudo cp index.html styles.css /var/www/jdwd40.com/html/times-tables/
+   sudo cp -r src /var/www/jdwd40.com/html/times-tables/
+   sudo chown -R root:root /var/www/jdwd40.com/html/times-tables
    ```
 
 3. Add an nginx location inside the existing `jdwd40.com` TLS server block. Preserve the existing `/` location:
@@ -41,9 +46,8 @@ Run these steps on the existing nginx host after obtaining authorized access:
    }
 
    location /times-tables/ {
-       alias /var/www/jdwd40-times-tables/;
+       alias /var/www/jdwd40.com/html/times-tables/;
        index index.html;
-       try_files $uri $uri/ /times-tables/index.html;
    }
    ```
 
@@ -63,4 +67,4 @@ Run these steps on the existing nginx host after obtaining authorized access:
    - 1280×800: keypad does not cover the grid
    - complete a run: leaderboard row, best time, mute persistence and completion state
 
-6. Roll back safely by removing only the two `/times-tables` locations and reloading nginx. Leave `/var/www/jdwd40-times-tables` in place until the rollback is verified.
+6. Roll back safely by restoring `/etc/nginx/sites-enabled/jdwd40.com.before-times-tables-7ef8a53`, removing only the `/times-tables` snippet/include, and reloading nginx. The deployed document root can remain in place until rollback is verified.
