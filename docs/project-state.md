@@ -34,13 +34,15 @@ Updated 2026-09-22 18:43 UTC. Worktree: `times-tables-wt-20260922-171410-53e87e`
 
 ## Current
 
-HEAD `ba46952` (chunk 3) + duplicate-completion fix on top.
+HEAD `4319c3f` (duplicate-completion fix); branch is pushed and PR #1 is open.
 App is feature-complete per locked MVP scope; final review round closed.
 
 ## Next
 
-- Orchestrator (Luna) verifies this milestone, then deploys. Deployment is
-  explicitly PENDING until that verification — do not treat the app as deployed.
+- Live deployment was safely skipped: `jdwd40.com` resolves to a separate nginx
+  host (`213.165.91.221`), `/times-tables` currently serves the existing portfolio
+  fallback, SSH access timed out, and no safe remote deployment credentials are
+  available. Exact steps are in `docs/deployment.md`.
 - Optional polish only if a future review asks: roving tabindex on grid,
   layout niceties, Enter/Space preventDefault refinement (MINOR, noted by Grok).
 
